@@ -4,6 +4,7 @@ import { ArrowRight, Check, FileCheck, ShieldCheck, Sparkles, Star } from "lucid
 import { useEnquiry } from "../enquiry-drawer";
 import { Counter } from "../counter";
 import { RevealWords } from "../reveal";
+import { useCallback, useRef, useState } from "react";
 
 export function Hero() {
   const { open } = useEnquiry();
@@ -61,9 +62,30 @@ export function Hero() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="mt-12 grid max-w-[520px] grid-cols-3 gap-6 border-t border-cloud pt-8"
           >
-            <SocialProof number={<><Counter to={4.8} decimals={1} /> <span className="text-ember">★</span></>} label="39 Google Reviews" />
-            <SocialProof number={<><Counter to={1300} />+</>} label="Projects Done" />
-            <SocialProof number={<><Counter to={5} />+</>} label="Years in Bhopal" />
+            <SocialProof
+              number={
+                <>
+                  <Counter to={4.8} decimals={1} /> <span className="text-ember">★</span>
+                </>
+              }
+              label="39 Google Reviews"
+            />
+            <SocialProof
+              number={
+                <>
+                  <Counter to={1300} />+
+                </>
+              }
+              label="Projects Done"
+            />
+            <SocialProof
+              number={
+                <>
+                  <Counter to={5} />+
+                </>
+              }
+              label="Years in Bhopal"
+            />
           </motion.div>
         </div>
 
@@ -85,67 +107,69 @@ function SocialProof({ number, label }: { number: React.ReactNode; label: string
     </div>
   );
 }
-
 function FloatingCards() {
+  const cardRef = useRef(null);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+
+    // Calculate cursor position relative to the center of the card
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Limit rotation to a subtle 15 degrees max
+    const rotateY = ((mouseX - width / 2) / width) * 15;
+    const rotateX = ((mouseY - height / 2) / height) * -15;
+
+    setRotation({ x: rotateX, y: rotateY });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    // Reset position smoothly
+    setRotation({ x: 0, y: 0 });
+  }, []);
+
   return (
-    <div className="relative mx-auto h-full w-full max-w-[420px]">
-      <motion.div
-        initial={{ opacity: 0, x: 60, rotate: -6 }}
-        animate={{ opacity: 1, x: 0, rotate: -4 }}
-        transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        whileHover={{ y: -6, rotate: -2 }}
-        className="absolute left-0 top-0 w-[280px] rounded-[32px] border border-cloud bg-snow p-6 shadow-[0_8px_28px_-16px_rgba(9,9,11,0.15)]"
+    <div
+      className="relative mx-auto flex h-[550px] w-full max-w-[420px] items-center justify-center"
+      style={{ perspective: "1200px" }}
+    >
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={handleMouseLeave}
+        className="group relative h-full w-full cursor-pointer rounded-2xl shadow-2xl transition-all duration-200 ease-out will-change-transform"
+        style={{
+          transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovered ? 1.05 : 1})`,
+          transformStyle: "preserve-3d",
+        }}
       >
-        <div className="flex items-center justify-between">
-          <span className="ember-badge">Latest Completed</span>
-          <FileCheck size={18} className="text-iron" />
-        </div>
-        <div className="mt-5">
-          <div className="text-[16px] font-semibold text-obsidian">GST Registration</div>
-          <div className="mt-1 text-[13px] text-steel">Rajkamal Traders, MP Nagar</div>
-        </div>
-        <div className="mt-6 flex items-center gap-2 text-[13px] text-ash">
-          <Check size={16} className="text-ember" /> Delivered in 2 days
-        </div>
-      </motion.div>
+        {/* Glassmorphism overlay */}
+        <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-gradient-to-br from-white/20 via-transparent to-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <motion.div
-        initial={{ opacity: 0, x: 60 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.75, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        whileHover={{ y: -6 }}
-        className="absolute right-0 top-[140px] w-[260px] rounded-[28px] bg-slate p-6 text-snow shadow-[0_12px_32px_-16px_rgba(9,9,11,0.4)]"
-      >
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-ash">
-          <ShieldCheck size={12} /> Blessma Ledger
-        </div>
-        <div className="mt-4 text-[48px] font-semibold leading-none">
-          <Counter to={1300} />+
-        </div>
-        <div className="mt-2 text-[13px] text-ash">Successful projects across Bhopal & MP</div>
-      </motion.div>
+        <img
+          src="https://i.pinimg.com/736x/e1/63/8e/e1638eeec95a5b2632e2abaaf7214796.jpg"
+          alt="Floating Cards"
+          className="h-full w-full rounded-2xl object-cover"
+        />
 
-      <motion.div
-        initial={{ opacity: 0, x: 60, rotate: 3 }}
-        animate={{ opacity: 1, x: 0, rotate: 2 }}
-        transition={{ delay: 0.9, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        whileHover={{ y: -6, rotate: 0 }}
-        className="absolute bottom-0 left-6 w-[300px] rounded-[28px] border border-cloud bg-snow p-5"
-      >
-        <div className="flex items-center gap-2 text-[12px] text-steel">
-          <Sparkles size={14} className="text-ember" /> 35+ Services Available
-        </div>
-        <div className="mt-4 grid grid-cols-5 gap-2">
-          {["GST", "MSME", "FSSAI", "PSARA", "GEM"].map((s) => (
-            <div
-              key={s}
-              className="flex h-10 items-center justify-center rounded-xl border border-cloud bg-paper text-[10px] font-medium text-graphite"
-            >
-              {s}
-            </div>
-          ))}
-        </div>
-      </motion.div>
+        {/* Dynamic glare effect tracking the mouse */}
+        {isHovered && (
+          <div
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl transition-opacity duration-200"
+            style={{
+              background: `radial-gradient(circle at ${rotation.y * 5 + 50}% ${rotation.x * -5 + 50}%, rgba(255,255,255,0.15), transparent 60%)`,
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }
