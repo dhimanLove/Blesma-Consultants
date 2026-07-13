@@ -1,0 +1,215 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Blessma — Awesomic Zinc Grid design system */
+
+@theme {
+  /* Zinc palette */
+  --color-obsidian: #09090b;
+  --color-graphite: #18181b;
+  --color-slate: #27272a;
+  --color-iron: #3f3f46;
+  --color-steel: #52525b;
+  --color-fog: #71717a;
+  --color-ash: #a1a1aa;
+  --color-mist: #d4d4d8;
+  --color-cloud: #ececee;
+  --color-paper: #f4f4f5;
+  --color-snow: #ffffff;
+  --color-ember: #ff5a00;
+  --color-magenta-spark: #fe45e2;
+
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-dm-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-badges: 12px;
+  --radius-inputs: 14px;
+  --radius-buttons: 14px;
+  --radius-cards: 36px;
+  --radius-icons: 40px;
+  --radius-pills: 10000px;
+
+  --shadow-cta:
+    rgba(255, 255, 255, 0.5) 0px 0.5px 0px 0px inset,
+    rgba(117, 123, 133, 0.4) 0px 9px 14px -5px inset,
+    rgb(44, 46, 52) 0px 0px 0px 1.5px,
+    rgba(0, 0, 0, 0.14) 0px 4px 6px 0px;
+}
+
+/* Shadcn semantic tokens mapped onto the zinc palette so existing UI primitives still theme correctly */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.875rem;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: #09090b;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #52525b;
+  --accent: #f4f4f5;
+  --accent-foreground: #09090b;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #ececee;
+  --input: #ececee;
+  --ring: #a1a1aa;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-family: var(--font-dm-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-obsidian);
+    font-family: var(--font-dm-sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  ::selection {
+    background: var(--color-ember);
+    color: #ffffff;
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-obsidian);
+  color: var(--color-snow);
+  border: 1.5px solid #2c2e34;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-cta);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-snow);
+  color: var(--color-iron);
+  border: 1px solid var(--color-iron);
+  border-radius: 10000px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  &:hover {
+    background: var(--color-paper);
+  }
+}
+
+@utility btn-ember {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-ember);
+  color: var(--color-snow);
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  &:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+}
+
+@utility card-zinc {
+  background: var(--color-snow);
+  border: 1px solid var(--color-cloud);
+  border-radius: 36px;
+  padding: 28px;
+  transition: border-color 0.2s ease;
+  &:hover {
+    border-color: var(--color-mist);
+  }
+}
+
+@utility tag-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-cloud);
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--color-graphite);
+  background: var(--color-snow);
+}
+
+@utility ember-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-ember);
+  color: var(--color-snow);
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
