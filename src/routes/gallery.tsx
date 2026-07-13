@@ -8,7 +8,7 @@ export const Route = createFileRoute("/gallery")({
       {
         name: "description",
         content:
-          "A look inside Blessma Consultants — our Bhopal office at M.P. Nagar, team at work, and recently delivered client certificates.",
+          "A look inside Blessma Consultants - our Bhopal office at M.P. Nagar, team at work, and recently delivered client certificates.",
       },
       { property: "og:title", content: "Gallery · Blessma Consultants" },
       { property: "og:url", content: "/gallery" },

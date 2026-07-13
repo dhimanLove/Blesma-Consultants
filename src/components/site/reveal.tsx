@@ -1,15 +1,7 @@
 "use client";
-import { motion, type Variants } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-const variants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
+type RevealTag = keyof JSX.IntrinsicElements;
 
 export function Reveal({
   children,
@@ -20,20 +12,41 @@ export function Reveal({
   children: ReactNode;
   delay?: number;
   className?: string;
-  as?: keyof typeof motion;
+  as?: RevealTag;
 }) {
-  const Motion = motion[Tag] as typeof motion.div;
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-80px", threshold: 0.1 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Motion
+    <Tag
+      ref={ref as any}
       className={className}
-      custom={delay}
-      variants={variants}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-80px" }}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.55s ease ${delay * 0.06}s, transform 0.55s ease ${delay * 0.06}s`,
+      }}
     >
       {children}
-    </Motion>
+    </Tag>
   );
 }
 
@@ -47,27 +60,24 @@ export function RevealWords({
   wordClassName?: string;
 }) {
   const words = text.split(" ");
+
   return (
-    <motion.span
-      className={className}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ staggerChildren: 0.045 }}
-    >
+    <span className={className} style={{ display: "inline-block" }}>
       {words.map((w, i) => (
-        <motion.span
+        <span
           key={i}
-          className={`inline-block ${wordClassName ?? ""}`}
-          variants={{
-            hidden: { opacity: 0, y: 24 },
-            show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+          className={wordClassName}
+          style={{
+            display: "inline-block",
+            opacity: 0,
+            transform: "translateY(24px)",
+            animation: `reveal-up 0.55s ease forwards ${i * 45}ms`,
           }}
         >
           {w}
-          {i < words.length - 1 && <span>&nbsp;</span>}
-        </motion.span>
+          {i < words.length - 1 ? "\u00A0" : ""}
+        </span>
       ))}
-    </motion.span>
+    </span>
   );
 }

@@ -19,7 +19,7 @@ const items = [
   },
   {
     quote:
-      "Got my GST and startup registrations sorted quickly. The team walked me through every step with clear explanations — I never felt lost.",
+      "Got my GST and startup registrations sorted quickly. The team walked me through every step with clear explanations - I never felt lost.",
     author: "Anjali Patel",
     meta: "GST & Startup India · 2 months ago",
     tag: "GST & Startup India",

@@ -6,15 +6,15 @@ import { Reveal, RevealWords } from "../reveal";
 const features = [
   {
     title: "E-Tender Expertise",
-    body: "Blessma manages the full e-tendering lifecycle — from registration to bid submission on NIC, MPTENDERS and GEM portals.",
+    body: "Blessma manages the full e-tendering lifecycle - from registration to bid submission on NIC, MPTENDERS and GEM portals.",
   },
   {
     title: "Seamless Digital Solutions",
-    body: "Everything online. Upload documents, track status, receive certificates — no unnecessary office visits.",
+    body: "Everything online. Upload documents, track status, receive certificates - no unnecessary office visits.",
   },
   {
     title: "Comprehensive Support",
-    body: "Single point of contact for 35+ compliance needs. GST, MSME, Factory License, Trademark — all under one roof.",
+    body: "Single point of contact for 35+ compliance needs. GST, MSME, Factory License, Trademark - all under one roof.",
   },
   {
     title: "Transparency & Trust",

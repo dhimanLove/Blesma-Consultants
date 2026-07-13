@@ -5,7 +5,7 @@ const steps = [
   {
     n: "01",
     title: "Contact Us",
-    body: "Call, WhatsApp or fill the form. Tell us what you need — we'll guide you on the exact documents required.",
+    body: "Call, WhatsApp or fill the form. Tell us what you need - we'll guide you on the exact documents required.",
     badge: "Response within 1 hour",
   },
   {

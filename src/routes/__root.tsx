@@ -26,7 +26,7 @@ const jsonLd = {
       name: "Blessma Consultants",
       alternateName: "Blessma Business Startup Consultants",
       description:
-        "Complete business compliance solutions — licenses, registrations, certificates, e-tenders and GEM services in Bhopal, MP.",
+        "Complete business compliance solutions - licenses, registrations, certificates, e-tenders and GEM services in Bhopal, MP.",
       telephone: "+919826277788",
       email: "bhopal@blessma.in",
       address: {
@@ -122,7 +122,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Blessma Consultants, Bhopal — your complete compliance partner. GST, MSME/Udyam, Factory License, E-Tender, GEM, Trademark, Startup India & 35+ services. Call +91 9826277788.",
+          "Blessma Consultants, Bhopal - your complete compliance partner. GST, MSME/Udyam, Factory License, E-Tender, GEM, Trademark, Startup India & 35+ services. Call +91 9826277788.",
       },
       { name: "author", content: "Blessma Consultants" },
       {
@@ -170,6 +170,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         type: "application/ld+json",
         children: JSON.stringify(jsonLd),
+      },
+      // Strip known extension-injected attributes early to avoid hydration mismatches.
+      {
+        type: "text/javascript",
+        children: `(function(){try{var names=['cz-shortcut-listen','ch-content-script-dend','content-script-idle','showonechild','actionablecoachmark'];function rm(el){if(!el||!el.hasAttribute) return;names.forEach(function(n){if(el.hasAttribute(n))el.removeAttribute(n)})}rm(document.documentElement);if(document.body)rm(document.body);else document.addEventListener('DOMContentLoaded',function(){rm(document.body)})}catch(e){}})();`,
       },
     ],
   }),

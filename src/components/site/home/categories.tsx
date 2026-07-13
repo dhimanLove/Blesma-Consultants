@@ -1,6 +1,5 @@
 "use client";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
 import { ArrowRight, Award, Building2, FileCheck, Gavel } from "lucide-react";
 import { Reveal } from "../reveal";
 
@@ -38,12 +37,12 @@ export function Categories() {
           </Reveal>
           <Reveal delay={1}>
             <h2 className="mt-4 text-[32px] font-semibold leading-[1.15] tracking-[-0.01em] text-obsidian sm:text-[40px]">
-              Everything Your Business Needs — In One Place
+              Everything Your Business Needs - In One Place
             </h2>
           </Reveal>
           <Reveal delay={2}>
             <p className="mt-4 text-[15px] leading-relaxed text-steel">
-              From day-one registrations to ongoing compliance — Blessma handles it all.
+              From day-one registrations to ongoing compliance - Blessma handles it all.
             </p>
           </Reveal>
         </div>
@@ -51,11 +50,7 @@ export function Categories() {
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {cards.map((c, i) => (
             <Reveal key={c.title} delay={i}>
-              <motion.div
-                whileHover={{ y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="card-zinc h-full"
-              >
+              <div className="card-zinc h-full transition-transform duration-200 ease-out hover:-translate-y-1">
                 <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-paper text-iron">
                   <c.icon size={20} />
                 </div>
@@ -80,7 +75,7 @@ export function Categories() {
                 >
                   View all {c.title.toLowerCase()} <ArrowRight size={14} />
                 </Link>
-              </motion.div>
+              </div>
             </Reveal>
           ))}
         </div>
@@ -99,8 +94,7 @@ export function Categories() {
                   End-to-end government e-tendering support.
                 </h3>
                 <p className="mt-3 text-[14px] leading-relaxed text-ash">
-                  GEM Registration, online bidding, e-tender registration on NIC and MPTENDERS —
-                  Blessma is your expert partner for transparent, efficient government procurement.
+                  GEM Registration, online bidding, e-tender registration on NIC and MPTENDERS - Blessma is your expert partner for transparent, efficient government procurement.
                 </p>
               </div>
               <div className="flex flex-col items-start gap-3">

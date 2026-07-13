@@ -20,7 +20,7 @@ export const Route = createFileRoute("/why-choose-us")({
 });
 
 const reasons = [
-  { title: "E-Tender Expertise", body: "Full lifecycle on NIC, MPTENDERS & GEM portals — registration to bid submission." },
+  { title: "E-Tender Expertise", body: "Full lifecycle on NIC, MPTENDERS & GEM portals - registration to bid submission." },
   { title: "Seamless Digital Solutions", body: "Everything online. Upload on WhatsApp, receive by email." },
   { title: "Comprehensive Under One Roof", body: "35+ services, one dedicated point of contact." },
   { title: "Transparency & Trust", body: "4.8★ on Google, 39 verified reviews. No hidden charges." },

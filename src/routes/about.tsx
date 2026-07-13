@@ -26,7 +26,7 @@ export const Route = createFileRoute("/about")({
 const values = [
   { icon: Users, title: "Client-first", body: "Every client gets a single dedicated point of contact." },
   { icon: HeartHandshake, title: "Transparency", body: "Flat pricing, clear timelines, no hidden charges." },
-  { icon: Building2, title: "End-to-end", body: "From documentation to certificate delivery — we own the outcome." },
+  { icon: Building2, title: "End-to-end", body: "From documentation to certificate delivery - we own the outcome." },
   { icon: Award, title: "Accuracy", body: "5+ years, 1,300+ projects, 4.8★ rating on Google." },
 ];
 
@@ -40,7 +40,7 @@ function AboutPage() {
             <RevealWords text="Bhopal's trusted compliance partner since 2019." />
           </h1>
           <p className="mt-6 max-w-[640px] text-[16px] leading-[1.55] text-steel">
-            Blessma Consultants was founded with a single mission — make government compliance
+            Blessma Consultants was founded with a single mission - make government compliance
             simple, fast and predictable for every business in Bhopal. What began as a small
             practice in M.P. Nagar is today the region's most comprehensive one-stop compliance
             firm, trusted by 1,300+ businesses.

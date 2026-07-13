@@ -159,7 +159,7 @@ function ServiceDetail() {
                 </h2>
                 <ol className="mt-5 space-y-4">
                   {["Share your requirement on WhatsApp or the enquiry form.",
-                    "Send documents digitally — we verify completeness the same day.",
+                    "Send documents digitally - we verify completeness the same day.",
                     "We file, follow up with authorities and deliver your certificate."].map(
                     (step, i) => (
                       <li key={i} className="flex gap-4 rounded-[16px] border border-cloud bg-snow p-5">
@@ -181,7 +181,7 @@ function ServiceDetail() {
                 </h2>
                 <ul className="mt-5 space-y-3">
                   {["Single point of contact through delivery",
-                    "Flat, transparent pricing — no hidden fees",
+                    "Flat, transparent pricing - no hidden fees",
                     "5+ years of Bhopal-specific expertise",
                     "4.8★ Google rating across 39 verified reviews"].map((r) => (
                     <li key={r} className="flex items-start gap-3 text-[14px] text-graphite">

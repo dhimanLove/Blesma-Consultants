@@ -1,5 +1,4 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { services, type ServiceCategory } from "@/lib/services";
@@ -50,38 +49,24 @@ export function ServicesGrid() {
             <button
               key={t.id}
               onClick={() => setActive(t.id)}
-              className={`relative rounded-full px-4 py-2 text-[13px] transition-colors ${
-                active === t.id ? "text-snow" : "text-iron hover:text-obsidian"
+              className={`relative rounded-full px-4 py-2 text-[13px] transition-colors duration-200 ${
+                active === t.id
+                  ? "bg-obsidian text-snow"
+                  : "text-iron hover:text-obsidian"
               }`}
             >
-              {active === t.id && (
-                <motion.span
-                  layoutId="tab-pill"
-                  className="absolute inset-0 rounded-full bg-obsidian"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
+              <span className={`absolute inset-0 rounded-full ${active === t.id ? "bg-obsidian" : ""}`} />
               <span className="relative whitespace-nowrap">{t.label}</span>
             </button>
           ))}
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25 }}
-            className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          >
-            {filtered.map((s) => (
-              <motion.button
-                key={s.slug}
-                whileHover={{ y: -4, borderColor: "#d4d4d8" }}
-                transition={{ duration: 0.18 }}
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filtered.map((s) => (
+            <Reveal key={s.slug} delay={0}>
+              <button
                 onClick={() => open(s.slug)}
-                className="group flex h-full flex-col items-start rounded-[24px] border border-cloud bg-snow p-5 text-left"
+                className="group flex h-full flex-col items-start rounded-[24px] border border-cloud bg-snow p-5 text-left transition-transform duration-200 ease-out hover:-translate-y-1 hover:border-slate"
               >
                 <div className="flex w-full items-start justify-between">
                   <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-paper text-[13px] font-semibold text-iron">
@@ -93,7 +78,7 @@ export function ServicesGrid() {
                   </div>
                   <ArrowUpRight
                     size={16}
-                    className="text-ash transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ember"
+                    className="text-ash transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ember"
                   />
                 </div>
                 <div className="mt-4 text-[14px] font-semibold leading-[1.35] text-obsidian">
@@ -104,10 +89,10 @@ export function ServicesGrid() {
                 </div>
                 <div className="mt-3 text-[12px] text-steel">{s.tagline}</div>
                 <span className="mt-4 text-[12px] font-medium text-ember">Enquire →</span>
-              </motion.button>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+              </button>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

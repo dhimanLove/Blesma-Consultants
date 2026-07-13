@@ -5,7 +5,7 @@ export const Route = createFileRoute("/services")({
 });
 
 function ServicesLayout() {
-  // Use Outlet — /services shows index child; /services/$slug shows detail
+  // Use Outlet - /services shows index child; /services/$slug shows detail
   const matches = useMatches();
   void matches;
   return <Outlet />;

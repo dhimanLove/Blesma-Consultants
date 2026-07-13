@@ -10,7 +10,7 @@ export const Route = createFileRoute("/services/")({
       {
         name: "description",
         content:
-          "Explore all 35+ compliance services from Blessma Consultants — GST, MSME, Gumasta, Factory License, E-Tender, GEM Registration, Trademark, and more in Bhopal.",
+          "Explore all 35+ compliance services from Blessma Consultants - GST, MSME, Gumasta, Factory License, E-Tender, GEM Registration, Trademark, and more in Bhopal.",
       },
       { property: "og:title", content: "All Services · Blessma Consultants" },
       { property: "og:description", content: "35+ licenses, registrations and e-tender services in Bhopal." },

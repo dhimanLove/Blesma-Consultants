@@ -1,4 +1,5 @@
 "use client";
+
 import {
   createContext,
   useCallback,
@@ -7,14 +8,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { X, Check } from "lucide-react";
+import { X, Check, Loader2 } from "lucide-react";
 import { services } from "@/lib/services";
 
 interface DrawerCtx {
   open: (preselectService?: string) => void;
   close: () => void;
 }
+
 const Ctx = createContext<DrawerCtx | null>(null);
 
 export const useEnquiry = () => {
@@ -27,6 +28,9 @@ export function EnquiryDrawerProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [preselected, setPreselected] = useState<string | undefined>();
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form state
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -40,181 +44,252 @@ export function EnquiryDrawerProvider({ children }: { children: ReactNode }) {
     setIsOpen(true);
   }, []);
 
-  const close = useCallback(() => setIsOpen(false), []);
+  const close = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
+  // Handle Escape key
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape" && isOpen) {
+        e.preventDefault();
+        setIsOpen(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [isOpen]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Precision Scroll Lock: Delays unlock to match exit animation duration
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      const timer = setTimeout(() => {
+        document.body.style.overflow = "";
+      }, 500); // Matches the 500ms transition duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (!name || !phone || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    // Simulate brief processing delay for better UX and to prevent instant jarring redirects
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
     const svc = services.find((s) => s.slug === service)?.name ?? service ?? "a service";
-    const text = `Hello Blessma! I need help with ${svc}. My name is ${name}, phone: ${phone}.${
-      email ? ` Email: ${email}.` : ""
-    }${message ? ` ${message}` : ""}`;
+    const text = `Hello Blessma! 👋\n\nI need help with: *${svc}*.\n\n*Name:* ${name}\n*Phone:* ${phone}${
+      email ? `\n*Email:* ${email}` : ""
+    }${message ? `\n*Message:* ${message}` : ""}`;
+    
     const url = `https://api.whatsapp.com/send/?phone=919826277788&text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
+    
     setSubmitted(true);
+    setIsSubmitting(false);
+  };
+
+  const resetForm = () => {
+    setName("");
+    setPhone("");
+    setEmail("");
+    setService("");
+    setMessage("");
+    setPreselected(undefined);
+    setSubmitted(false);
   };
 
   return (
     <Ctx.Provider value={{ open, close }}>
       {children}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={close}
-              className="fixed inset-0 z-[80] bg-obsidian/30 backdrop-blur-sm"
-            />
-            <motion.aside
-              key="drawer"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-              className="fixed right-0 top-0 z-[90] h-full w-full max-w-[440px] overflow-y-auto rounded-l-[36px] bg-snow p-8 shadow-xl sm:p-10"
-              role="dialog"
-              aria-modal="true"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-[24px] font-semibold leading-tight text-obsidian">
-                    Get a Free Consultation
-                  </h3>
-                  <p className="mt-2 text-[14px] text-steel">
-                    Fill in your details and we'll call you back within 1 hour.
-                  </p>
-                </div>
-                <button
-                  onClick={close}
-                  aria-label="Close enquiry drawer"
-                  className="rounded-full border border-cloud p-2 text-iron transition-colors hover:bg-paper"
-                >
-                  <X size={18} />
-                </button>
-              </div>
+      
+      {/* Backdrop with smooth opacity transition */}
+      <div
+        onClick={close}
+        className={`fixed inset-0 z-[80] bg-obsidian/40 backdrop-blur-md transition-all duration-500 ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        aria-hidden="true"
+      />
 
-              {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mt-10 text-center"
-                >
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-ember text-snow">
-                    <Check size={28} />
-                  </div>
-                  <h4 className="mt-6 text-[22px] font-semibold text-obsidian">Enquiry Sent!</h4>
-                  <p className="mt-2 text-[14px] text-steel">
-                    We've opened WhatsApp with your details. We'll respond within 1 hour.
-                  </p>
-                  <span className="ember-badge mt-4 inline-flex">Response Guaranteed</span>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-                  <Field label="Full Name" required>
-                    <input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                      className="input-zinc"
-                      placeholder="Your name"
-                    />
-                  </Field>
-                  <Field label="Phone Number" required>
-                    <input
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      required
-                      type="tel"
-                      className="input-zinc"
-                      placeholder="+91 98262 77788"
-                    />
-                  </Field>
-                  <Field label="Email (optional)">
-                    <input
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      type="email"
-                      className="input-zinc"
-                      placeholder="you@company.com"
-                    />
-                  </Field>
-                  <Field label="Service Required">
-                    <select
-                      value={service}
-                      onChange={(e) => setService(e.target.value)}
-                      className="input-zinc appearance-none bg-snow"
-                    >
-                      <option value="">Select a service…</option>
-                      {services.map((s) => (
-                        <option key={s.slug} value={s.slug}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                    {preselected && (
-                      <p className="mt-1 text-[11px] text-ash">Pre-selected from the page you were viewing.</p>
-                    )}
-                  </Field>
-                  <Field label="Message (optional)">
-                    <textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      rows={3}
-                      className="input-zinc resize-none"
-                      placeholder="Tell us anything else…"
-                    />
-                  </Field>
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    className="btn-primary mt-2 w-full"
-                  >
-                    Send Enquiry via WhatsApp
-                  </motion.button>
-                  <p className="text-center text-[12px] text-ash">
-                    Or call directly: <a href="tel:+919826277788" className="text-obsidian underline">+91 9826277788</a>
-                  </p>
-                </form>
+      {/* 
+        Hybrid Responsive Drawer:
+        - Mobile: Bottom sheet (translate-y), 92vh height, rounded top
+        - Desktop (sm+): Right drawer (translate-x), full height, rounded left
+        - Easing: cubic-bezier(0.32,0.72,0,1) for a premium, snappy-yet-smooth feel
+      */}
+      <aside
+        className={`fixed bottom-0 left-0 right-0 z-[90] h-[92vh] rounded-t-[32px] bg-snow p-6 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] sm:top-0 sm:right-0 sm:left-auto sm:h-full sm:max-w-[440px] sm:rounded-t-none sm:rounded-l-[36px] sm:p-8 ${
+          isOpen ? "translate-y-0 sm:translate-x-0" : "translate-y-full sm:translate-x-full"
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+      >
+        {/* Mobile Drag Handle (Visual cue) */}
+        <div className="sm:hidden mx-auto mb-6 h-1.5 w-12 rounded-full bg-cloud" />
+
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 id="drawer-title" className="text-[24px] font-semibold leading-tight text-obsidian">
+              Get a Free Consultation
+            </h3>
+            <p className="mt-2 text-[14px] text-steel">
+              Fill in your details and we'll call you back within 1 hour.
+            </p>
+          </div>
+          <button
+            onClick={close}
+            aria-label="Close enquiry drawer"
+            className="rounded-full border border-cloud p-2 text-iron transition-colors hover:bg-paper hover:text-obsidian"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {submitted ? (
+          <div className="mt-10 flex flex-col items-center text-center animate-fade-in">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-ember text-snow shadow-lg shadow-ember/20">
+              <Check size={32} strokeWidth={3} />
+            </div>
+            <h4 className="mt-6 text-[22px] font-semibold text-obsidian">Enquiry Sent!</h4>
+            <p className="mt-3 max-w-[280px] text-[14px] leading-relaxed text-steel">
+              We've opened WhatsApp with your details. Our team will respond within 1 hour.
+            </p>
+            <span className="ember-badge mt-6 inline-flex">Response Guaranteed</span>
+            <button 
+              onClick={() => { resetForm(); close(); }}
+              className="mt-8 text-sm font-medium text-steel underline underline-offset-4 hover:text-obsidian"
+            >
+              Close this window
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <Field label="Full Name" required>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                autoComplete="name"
+                className="input-zinc"
+                placeholder="e.g. Rahul Sharma"
+              />
+            </Field>
+            
+            <Field label="Phone Number" required>
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                required
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                className="input-zinc"
+                placeholder="98262 77788"
+              />
+            </Field>
+
+            <Field label="Email (optional)">
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                autoComplete="email"
+                className="input-zinc"
+                placeholder="you@company.com"
+              />
+            </Field>
+
+            <Field label="Service Required">
+              <select
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+                className="input-zinc appearance-none bg-snow cursor-pointer"
+              >
+                <option value="">Select a service…</option>
+                {services.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              {preselected && (
+                <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-ember">
+                  <Check size={12} /> Pre-selected from the page you were viewing.
+                </p>
               )}
-            </motion.aside>
-          </>
+            </Field>
+
+            <Field label="Message (optional)">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={3}
+                className="input-zinc resize-none"
+                placeholder="Tell us anything else about your requirements…"
+              />
+            </Field>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-primary mt-2 flex w-full items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Send Enquiry via WhatsApp"
+              )}
+            </button>
+
+            <p className="text-center text-[12px] text-ash">
+              Or call directly:{" "}
+              <a href="tel:+919826277788" className="font-medium text-obsidian underline underline-offset-2 transition-colors hover:text-ember">
+                +91 98262 77788
+              </a>
+            </p>
+          </form>
         )}
-      </AnimatePresence>
+      </aside>
+
       <style>{`
         .input-zinc {
           width: 100%;
-          border: 1px solid var(--color-cloud);
-          background: var(--color-snow);
+          border: 1px solid var(--color-cloud, #e2e8f0);
+          background: var(--color-snow, #ffffff);
           border-radius: 14px;
-          padding: 12px 14px;
-          font-size: 14px;
-          color: var(--color-obsidian);
+          padding: 14px 16px;
+          font-size: 15px;
+          color: var(--color-obsidian, #0f172a);
           font-family: inherit;
           outline: none;
-          transition: border-color 0.15s ease;
+          transition: all 0.2s ease;
+        }
+        .input-zinc::placeholder {
+          color: var(--color-ash, #94a3b8);
         }
         .input-zinc:focus {
-          border-color: var(--color-iron);
+          border-color: var(--color-ember, #f97316);
+          box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        }
+        /* Custom precision scrollbar for drawer */
+        aside::-webkit-scrollbar {
+          width: 6px;
+        }
+        aside::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        aside::-webkit-scrollbar-thumb {
+          background-color: var(--color-cloud, #e2e8f0);
+          border-radius: 20px;
         }
       `}</style>
     </Ctx.Provider>
@@ -232,7 +307,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[12px] font-medium uppercase tracking-wider text-fog">
+      <span className="mb-1.5 block text-[12px] font-semibold uppercase tracking-wider text-fog">
         {label} {required && <span className="text-ember">*</span>}
       </span>
       {children}
